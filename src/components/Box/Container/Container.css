@@ -1,0 +1,29 @@
+.Container {
+    position: relative;
+    width: 100%;
+    top: 60px;
+    font-size: 15px;
+    height: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid gray;
+}
+
+.ContainerName {
+    float: left;
+    width: calc(30% - 10px);
+    margin-left: 10px;
+}
+
+.ContainerDate {
+    float: left;
+    width: 40%;
+}
+
+.ContainerValue {
+    float: right;
+    text-align: right;
+    width: calc(30% - 10px);
+    margin-right: 10px;
+}
+

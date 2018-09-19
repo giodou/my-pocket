@@ -1,0 +1,18 @@
+.Footer {
+    background-color: #ccc;
+    position:absolute;
+    height: 40px;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 2px 3px #ccc; 
+}
+
+.NameFooter {
+    float: left;
+    margin: 10px;
+}
+
+.ValueFooter {
+    float: right;
+    margin: 10px;
+}
