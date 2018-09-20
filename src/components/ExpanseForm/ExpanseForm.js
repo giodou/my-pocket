@@ -5,61 +5,22 @@ import Spinner from '../UI/Spinner/Spinner';
 import classes from './ExpanseForm.css';
 import Input from '../UI/Input/Input';
 
+import CheckValidity from '../../Helpers/InputValidationHelper';
+import InputConfig from '../../Helpers/InputConfigHelper';
+
+import axios from '../../axios';
+
 class ExpanseForm extends Component {
     state = {
         expanseForm: {
-            description: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'text',
-                    placeholder: 'Descricão da despesa, Ex: Aluguel'
-                },
-                value: '',
-                validation: {
-                    required: true
-                },
-                valid: false,
-                touched: false
-            },
-            type: {
-                elementType: 'select',
-                elementConfig: {
-                    options: [
-                        { value: 'fixed', displayValue: 'Fixa (Paga todo mês, ex: Luz)' },
-                        { value: 'unique', displayValue: 'Unica' },
-                        { value: 'parceled', displayValue: 'Parcelada' }
-                    ]
-                },
-                value: '',
-                validation: {},
-                valid: true
-            },
-            value: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'number',
-                    placeholder: 'valor da despesa'
-                },
-                value: '',
-                validation: {
-                    required: true
-                },
-                valid: false,
-                touched: false
-            },
-            paymentDate: {
-                elementType: 'input',
-                elementConfig: {
-                    type: 'date',
-                    placeholder: 'Date de vencimento'
-                },
-                value: '',
-                validation: {
-                    required: true
-                },
-                valid: false,
-                touched: false
-            },
+            description: InputConfig('input', 'text', 'Descrição da conta, Ex: Aluguel', true), 
+            type: InputConfig('select', null, null, true, [
+                { value: 'fixed', displayValue: 'Fixa (Paga todo mês, ex: Luz)' },
+                { value: 'unique', displayValue: 'Unica' },
+                { value: 'parceled', displayValue: 'Parcelada' }
+            ]), 
+            value: InputConfig('input', 'number', 'valor da despesa', true),
+            paymentDate: InputConfig('input', 'date', 'Date de vencimento', true), 
         },
         formIsValid: false,
         loading: false
@@ -73,41 +34,16 @@ class ExpanseForm extends Component {
             formData[formElementIdentifier] = this.state.expanseForm[formElementIdentifier].value;
         }
         const expanse = {
-            ingredients: this.props.ingredients,
-            price: this.props.price,
             expanseData: formData
         }
-    }
 
-    checkValidity(value, rules) {
-        let isValid = true;
-        if (!rules) {
-            return true;
-        }
-
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid
-        }
-
-        if (rules.isEmail) {
-            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-            isValid = pattern.test(value) && isValid
-        }
-
-        if (rules.isNumeric) {
-            const pattern = /^\d+$/;
-            isValid = pattern.test(value) && isValid
-        }
-
-        return isValid;
+        axios.post( '/expanses.json', expanse )
+            .then( response => {
+                this.setState( { loading: false } );
+            } )
+            .catch( error => {
+                this.setState( { loading: false } );
+            } );
     }
 
     inputChangedHandler = (event, inputIdentifier) => {
@@ -118,7 +54,7 @@ class ExpanseForm extends Component {
             ...updatedexpanseForm[inputIdentifier]
         };
         updatedFormElement.value = event.target.value;
-        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+        updatedFormElement.valid = CheckValidity(updatedFormElement.value, updatedFormElement.validation);
         updatedFormElement.touched = true;
         updatedexpanseForm[inputIdentifier] = updatedFormElement;
 
